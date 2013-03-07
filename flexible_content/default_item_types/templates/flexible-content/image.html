@@ -1,0 +1,9 @@
+{% item.uploaded_file and item.uploaded_file.url %}
+    <figure class="image">
+        <img src="{{ item.uploaded_file.url }}" alt="{{ item.caption }}">
+        {% if item.caption %}
+            <figcaption>{{ item.caption }}</figcaption>
+        {% endif %}
+    </figure>
+{% endif %}
+

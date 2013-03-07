@@ -1,0 +1,24 @@
+{% if item.service and item.video_id %}
+    <figure class="video">
+        {% if item.service == 'youtube' %}
+            <iframe
+                src="http://www.youtube.com/embed/{{ item.video_id }}"
+                width="{% if item.width %}{{ item.width }}{% else %}640{% endif %}"
+                height="{% if item.height %}{{ item.height }}{% else %}365{% endif %}"
+                frameborder="0" allowfullscreen></iframe>
+        {% endif %}
+        {% if item.service == 'vimeo' %}
+            <iframe
+                src="http://player.vimeo.com/video/{{ item.video_id }}"
+                width="{% if item.width %}{{ item.width }}{% else %}640{% endif %}"
+                height="{% if item.height %}{{ item.height }}{% else %}365{% endif %}"
+                frameborder="0" webkitAllowFullScreen mozallowfullscreen
+                allowFullScreen></iframe>
+        {% endif %}
+
+        {% if item.caption %}
+            <figcaption>{{ item.caption }}</figcaption>
+        {% endif %}
+    </figure>
+{% endif %}
+
