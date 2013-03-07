@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 
 from flexible_content.models import BaseItem
 from flexible_content.utils import get_app_settings
@@ -13,7 +14,7 @@ class PlainText(BaseItem):
                         "HTML here.")
         type_slug = 'plain-text'
 
-    class Meta(BaseItem.Meta):
+    class Meta:
         verbose_name = _("Plain Text")
 
 
@@ -24,7 +25,7 @@ class RawHTML(BaseItem):
         description = _("Insert custom scripts or snippets of HTML here. Be "
                         "careful, though: you *can* break the site this way.")
 
-    class Meta(BaseItem.Meta):
+    class Meta:
         verbose_name = _("Raw HTML")
 
 
@@ -37,7 +38,7 @@ class Image(BaseItem):
                         "Note that it's usually best to put an image *before* "
                         "any text it should appear alongside.")
 
-    class Meta(BaseItem.Meta):
+    class Meta:
         verbose_name = _("Image")
 
 
@@ -50,7 +51,7 @@ class Download(BaseItem):
                         "Note that it's usually best to put a download "
                         "*before* any text it should appear alongside.")
 
-    class Meta(BaseItem.Meta):
+    class Meta:
         verbose_name = _("Download")
 
 

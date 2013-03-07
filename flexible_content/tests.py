@@ -4,19 +4,19 @@ from django.test.utils import override_settings
 
 from mock_project.test_app.models import MyArea, MyItem
 
-from .models import ContentArea, ContentItem
+from .models import ContentArea, BaseItem
 from .default_item_types.models import (DEFAULT_TYPES, PlainText, RawHTML,
                                         Image, Download, Video)
 from .utils import get_app_settings, get_models_from_strings
 
 
 CUSTOM_TYPES_STRING = (
-    'flexible_content.default_item_types.models.Text',
+    'flexible_content.default_item_types.models.PlainText',
     'flexible_content.default_item_types.models.Video',
     'mock_project.test_app.models.MyItem',
 )
 CUSTOM_TYPES_CLASSES = (
-    Text,
+    PlainText,
     Video,
     MyItem,
 )
@@ -32,14 +32,14 @@ class ConfiguredTypesTest(SimpleTestCase):
     def test_without_settings(self):
         from .default_item_types.models import DEFAULT_TYPES
         # Make sure it gave us the default types.
-        types = ContentItem.get_configured_types()
+        types = BaseItem.get_configured_types()
         self.assertEqual(types, DEFAULT_TYPES)
 
     @override_settings(IPANEMA="Hi!")
     def test_with_bad_settings(self):
         # Make sure we get an exception.
         try:
-            types = ContentItem.get_configured_types()
+            types = BaseItem.get_configured_types()
         except ImproperlyConfigured as e:
             pass
         else:
@@ -47,7 +47,7 @@ class ConfiguredTypesTest(SimpleTestCase):
 
     @override_settings(IPANEMA={'ITEM_TYPES': CUSTOM_TYPES_STRING})
     def test_with_custom_types(self):
-        types = ContentItem.get_configured_types()
+        types = BaseItem.get_configured_types()
         # Make sure we get an exception.
         self.assertEqual(types, CUSTOM_TYPES_CLASSES)
 
@@ -85,7 +85,7 @@ class AreaTest(TestCase):
         """
         # Use the content_items property (actually a method) to get area A's
         # items. Listify them, so we can do an assertEqual.
-        items = list(self.area_a.content_items)
+        items = list(self.area_a.items)
 
         self.assertEqual(items, [self.item_a1, self.item_a2])
 
@@ -93,9 +93,9 @@ class AreaTest(TestCase):
         """
         Areas should get a list of their items, and in the right order.
         """
-        # Use the content_items property (actually a method) to get area A's
-        # items. Listify them, so we can do an assertEqual.
-        items = list(ContentItems.objects.get_for_area(self.area_b))
+        # Use the BaseItem manager to fetch the area's items. Listify them,
+        # so we can do an assertEqual.
+        items = list(BaseItem.objects.get_for_area(self.area_b))
 
         self.assertEqual(items, [self.item_b1, self.item_b2])
 
@@ -155,14 +155,14 @@ class ItemTest(TestCase):
 
         # Re-render the form and supply data.
         form_with_data = new_item.get_form({'ordering': 3,
-                                            'content_area' self.area,
+                                            'content_area': self.area,
                                             'service': 'vimeo',
                                             'video_id': '60903598'})
         # Save it!
-        form.save()
+        form_with_data.save()
         
         # See if the form has an instance with valid primary key.
-        if not getattr(form.instance, 'pk'):
+        if not getattr(form_with_data.instance, 'pk'):
             self.fail(_("Couldn't create a video by saving faked data through "
                         "a form."))
 

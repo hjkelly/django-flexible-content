@@ -1,7 +1,7 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 
-from flexible_content.forms import ContentItemForm
-from flexible_content.models import ContentArea, ContentItem
+from flexible_content.models import ContentArea, BaseItem
 
 
 class MyArea(ContentArea):
@@ -15,6 +15,6 @@ class MyItem(BaseItem):
         description = _("Hopefully this works!")
         type_slug = 'my-item'
 
-    class Meta(BaseItem.Meta):
+    class Meta:
         verbose_name = _("My Item")
 
