@@ -49,7 +49,7 @@ class BaseItemManager(InheritanceManager):
         """
 
         # Get the uncasted items tied to the given area.
-        content_type = ContentType.objects.get_for_model(area)
+        content_type = area.get_content_type()
         qs = BaseItem.objects.filter(content_area_ct=content_type,
                                      content_area_id=area.pk)
         # Order those items!
@@ -150,6 +150,9 @@ class BaseItem(models.Model):
                                                       {'item': self})
         return self._rendered_content
 
+    def get_template_name(self):
+        return 'flexible-content/{}.html'.format(self.get_type_slug())
+
     def get_type_slug(self):
         # Try to get an explicit slug first.
         slug = getattr(self.FlexibleContentInfo, 'type_slug', None)
@@ -159,9 +162,6 @@ class BaseItem(models.Model):
             slug = self.__class__.__name__.lower()
 
         return slug
-
-    def get_template_name(self):
-        return 'flexible-content/{}.html'.format(self.get_type_slug())
 
 ###############################################################################
 # ContentArea
@@ -177,19 +177,8 @@ class ContentArea(models.Model):
     def items(self):
         return BaseItem.objects.get_for_area(self)
 
-    def get_generic_fk_form_data(self):
-        """
-        Create kwargs (like POST data) that could tie an item to this area.
-        """
-
-        # Don't let this go through if the area doesn't exist yet!
-        if not self.pk:
-            raise Exception("You must save an area before getting its pk.")
-
-        return {
-            'content_area_ct': ContentType.objects.get_for_model(self).pk,
-            'content_area_id': self.pk,
-        }
+    def get_content_type(self):
+        return ContentType.objects.get_for_model(self)
 
     def get_rendered_content(self):
         """

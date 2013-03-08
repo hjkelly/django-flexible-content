@@ -164,12 +164,11 @@ class ItemTest(TestCase):
 
         # Create some fake data to submit.
         fake_POST = {
+            'content_area_id': self.area.pk,
+            'content_area_ct': self.area.get_content_type().pk,
             'ordering': 3,
             'my_number': 6090,
         }
-        # Add in the two pieces of the generic foreign key - forms don't
-        # support the fanciness.
-        fake_POST.update(self.area.get_generic_fk_form_data())
 
         # Set up the form with this data and save it!
         form_with_data = new_item.get_form(fake_POST)
@@ -195,12 +194,13 @@ class ItemTest(TestCase):
 
         # Re-render the form and supply data.
         fake_POST = {
+            'content_area_id': self.area.pk,
+            'content_area_ct': self.area.get_content_type().pk,
             'ordering': 3,
             'service': 'vimeo',
             'video_id': '60903598',
         }
-        # Add in the generic FK data.
-        fake_POST.update(self.area.get_generic_fk_form_data())
+
         form_with_data = new_item.get_form(fake_POST)
         # Save it!
         form_with_data.save()
