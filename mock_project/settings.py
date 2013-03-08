@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'flexible_content',
     'flexible_content.default_item_types',
     'mock_project.test_app',
+    'django_coverage',
 )
 
 # A sample logging configuration. The only tangible logging

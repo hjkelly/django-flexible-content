@@ -1,54 +1,43 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
+from django.utils.translation import ugettext as _
 
 def get_app_settings():
     """
     Load the settings and make sure it's not totally wrong.
     """
 
-    app_settings = getattr(settings, 'IPANEMA', None)
+    app_settings = getattr(settings, 'FLEXIBLE_CONTENT', None)
     if app_settings is None:
         app_settings = {}
 
     # If the settings were defined as something other than None or a 
     # dictionary, raise a stink.
     if not isinstance(app_settings, dict):
-        problem = ("Setting IPANEMA should be a dictionary; instead, it was "
-                   "of type {}.".format(type(app_settings)))
-        raise ImproperlyConfigured(problem)
+        message = _("Setting FLEXIBLE_CONTENT should be a dictionary; "
+                    "instead, it was of type {}.".format(type(app_settings)))
+        raise ImproperlyConfigured(message)
 
     return app_settings
 
 def get_model_from_string(model_string):
     """
-    Take Python module path string and import that model.
+    Take a list of 'app.ModelName' strings and return a list of model classes.
     """
 
-    # Split the string by dots.
-    path_parts = model_string.split('.')
-    # Pull off the class name, which we'll need later.
-    class_name = path_parts.pop()
+    # This Django function takes app names and model class names 
+    # separated by a dot/period.
+    model = get_model(*model_string.split('.'))
+    
+    # If the model came back as None, it couldn't import it.
+    if model is None:
+        message = _("Model '{}' was defined in the settings for "
+                    "django-flexible-content, but couldn't be loaded. Please "
+                    "check your settings file!".format(model_string))
+        raise ImportError(message)
 
-    # Import the module the class resides in.
-    try:
-        module_string = '.'.join(path_parts)
-        module = __import__(module_string)
-    # If it couldn't be imported, fail with a more helpful message.
-    except ImportError:
-        raise ImportError("The settings file specified a content item class "
-                          "called {}, but module {} couldn't be imported ".
-                          format(model_string, module_string))
-    # From that module, pull and return the class they asked for.
-    try:
-        cls = getattr(module, class_name)
-    # If it couldn't be imported, fail with a more helpful message.
-    except AttributeError:
-        raise ImportError("The settings file specified a content item class "
-                          "called {}, but module {} didn't contain a class by "
-                          "that name.".format(model_string, module_string))
-
-    return cls
+    return model
 
 def get_models_from_strings(model_strings):
     """

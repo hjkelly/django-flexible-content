@@ -83,5 +83,10 @@ class Video(BaseItem):
     class Meta:
         verbose_name = _("Video")
 
+    def get_form_class(self):
+        from .forms import VideoForm
+        return VideoForm
+
+
 # Register all of the types below
 DEFAULT_TYPES = (PlainText, RawHTML, Image, Download, Video)

@@ -11,9 +11,9 @@ from .utils import get_app_settings, get_models_from_strings
 
 
 CUSTOM_TYPES_STRING = (
-    'flexible_content.default_item_types.models.PlainText',
-    'flexible_content.default_item_types.models.Video',
-    'mock_project.test_app.models.MyItem',
+    'default_item_types.PlainText',
+    'default_item_types.Video',
+    'test_app.MyItem',
 )
 CUSTOM_TYPES_CLASSES = (
     PlainText,
@@ -28,31 +28,46 @@ class ConfiguredTypesTest(SimpleTestCase):
     given configuration.
     """
 
-    @override_settings(IPANEMA=None)
+    # Use blank settings to make sure it recovers by using the default types.
+    @override_settings(FLEXIBLE_CONTENT=None)
     def test_without_settings(self):
         from .default_item_types.models import DEFAULT_TYPES
         # Make sure it gave us the default types.
         types = BaseItem.get_configured_types()
         self.assertEqual(types, DEFAULT_TYPES)
 
-    @override_settings(IPANEMA="Hi!")
+    # Use invalid settings to make sure it complains about it.
+    @override_settings(FLEXIBLE_CONTENT="Hi!")
     def test_with_bad_settings(self):
-        # Make sure we get an exception.
         try:
             types = BaseItem.get_configured_types()
-        except ImproperlyConfigured as e:
+        except ImproperlyConfigured:
             pass
         else:
-            self.fail("Bad settings didn't raise an exception.")
+            self.fail("BaseItem.get_configured_types() didn't raise an "
+                      "exception when the settings were way wrong (a string "
+                      "instead of a dict).")
 
-    @override_settings(IPANEMA={'ITEM_TYPES': CUSTOM_TYPES_STRING})
+    # Give it a nonexistent app and model to make sure it complains.
+    @override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': ('fake_app.ThisDoesNotExist',)})
+    def test_with_nonexistent_type(self):
+        try:
+            types = BaseItem.get_configured_types()
+        except ImportError:
+            pass
+        else:
+            self.fail("BaseItem.get_configured_types() didn't raise an "
+                      "exception when given a non-existent model.")
+
+    # Configure the project's settings to use the custom type strings above.
+    @override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': CUSTOM_TYPES_STRING})
     def test_with_custom_types(self):
         types = BaseItem.get_configured_types()
-        # Make sure we get an exception.
+        # Make sure it matches our tuple of those classes.
         self.assertEqual(types, CUSTOM_TYPES_CLASSES)
 
 
-@override_settings(IPANEMA={'ITEM_TYPES': CUSTOM_TYPES_STRING})
+@override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': CUSTOM_TYPES_STRING})
 class AreaTest(TestCase):
     """
     Ensure that all of the basic functions we need can be 
@@ -116,7 +131,7 @@ class AreaTest(TestCase):
                       "content.".format(self.item_a2.text))
 
 
-@override_settings(IPANEMA={'ITEM_TYPES': CUSTOM_TYPES_STRING})
+@override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': CUSTOM_TYPES_STRING})
 class ItemTest(TestCase):
     """
     Make sure we can create, edit, and delete items of different types.
@@ -140,9 +155,34 @@ class ItemTest(TestCase):
         self.assertEqual(self.item_2.get_template_name(),
                          'flexible-content/video.html')
 
-    def test_create_from_nothing(self):
+    def test_create_simple_type(self):
         """
-        Can we get a blank form for an item that only has a type?
+        Can we create an instance of an item without a defined form?
+        """
+        # Create a blank item.
+        new_item = MyItem()
+
+        # Create some fake data to submit.
+        fake_POST = {
+            'ordering': 3,
+            'my_number': 6090,
+        }
+        # Add in the two pieces of the generic foreign key - forms don't
+        # support the fanciness.
+        fake_POST.update(self.area.get_generic_fk_form_data())
+
+        # Set up the form with this data and save it!
+        form_with_data = new_item.get_form(fake_POST)
+        form_with_data.save()
+
+        # See if the form has an instance with valid primary key.
+        if not getattr(form_with_data.instance, 'pk'):
+            self.fail(_("Couldn't create a MyItem by saving faked data through "
+                        "a form."))
+
+    def test_create_type_with_custom_form(self):
+        """
+        Can we create an instance of an item that uses a custom form?
         """
         new_item = Video()
 
@@ -154,10 +194,14 @@ class ItemTest(TestCase):
             self.fail(_("Couldn't get a form instance from an unsaved item."))
 
         # Re-render the form and supply data.
-        form_with_data = new_item.get_form({'ordering': 3,
-                                            'content_area': self.area,
-                                            'service': 'vimeo',
-                                            'video_id': '60903598'})
+        fake_POST = {
+            'ordering': 3,
+            'service': 'vimeo',
+            'video_id': '60903598',
+        }
+        # Add in the generic FK data.
+        fake_POST.update(self.area.get_generic_fk_form_data())
+        form_with_data = new_item.get_form(fake_POST)
         # Save it!
         form_with_data.save()
         

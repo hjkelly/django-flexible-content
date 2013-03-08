@@ -1,1 +1,4 @@
 django-model-utils
+requests
+coverage
+django-coverage

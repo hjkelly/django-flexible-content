@@ -23,6 +23,7 @@ from django.contrib.contenttypes.generic import (GenericForeignKey,
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.forms import ModelForm
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from json_field import JSONField
@@ -42,10 +43,17 @@ class BaseItemManager(InheritanceManager):
         """
         Returns all items belonging to a given model instance, casted to their
         real types.
+
+        Note that all queries (even the ones on the model) should go through
+        this manager.
         """
 
-        # Get the uncasted items via GenericRelation, then order them.
-        qs = area.uncasted_items.order_by('ordering', 'pk')
+        # Get the uncasted items tied to the given area.
+        content_type = ContentType.objects.get_for_model(area)
+        qs = BaseItem.objects.filter(content_area_ct=content_type,
+                                     content_area_id=area.pk)
+        # Order those items!
+        qs = qs.order_by('ordering', 'pk')
 
         # Use InheritanceManager to automatically (and without extra queries)
         # downcast each item via the OneToOneField multi-table inhertiance
@@ -85,8 +93,7 @@ class BaseItem(models.Model):
         """
 
         # Do the settings define classes?
-        configured_types = (get_app_settings().
-                            get('ITEM_TYPES', None))
+        configured_types = get_app_settings().get('ITEM_TYPES', None)
 
         # If there are types chosen, import them.
         if configured_types is not None:
@@ -96,7 +103,7 @@ class BaseItem(models.Model):
             from .default_item_types.models import DEFAULT_TYPES
             configured_types = DEFAULT_TYPES
 
-        return configured_types
+        return tuple(configured_types)
 
     def get_description(self):
         return getattr(self.FlexibleContentInfo, 'description', '')
@@ -138,7 +145,7 @@ class BaseItem(models.Model):
         Use the template to render this instance's data, and cache it on the
         instance.
         """
-        if self._rendered_content is None:
+        if getattr(self, '_rendered_content', None) is None:
             self._rendered_content = render_to_string(self.get_template_name(),
                                                       {'item': self})
         return self._rendered_content
@@ -163,18 +170,26 @@ class BaseItem(models.Model):
 class ContentArea(models.Model):
     rendered_content = None
 
-    # This is here as a useful relationship, but it's not meant to be used 
-    # directly. In ca
-    uncasted_items = GenericRelation(BaseItem,
-                                     content_type_field='content_area_ct',
-                                     object_id_field='content_type_id')
-
     class Meta:
         abstract = True
 
     @property
     def items(self):
         return BaseItem.objects.get_for_area(self)
+
+    def get_generic_fk_form_data(self):
+        """
+        Create kwargs (like POST data) that could tie an item to this area.
+        """
+
+        # Don't let this go through if the area doesn't exist yet!
+        if not self.pk:
+            raise Exception("You must save an area before getting its pk.")
+
+        return {
+            'content_area_ct': ContentType.objects.get_for_model(self).pk,
+            'content_area_id': self.pk,
+        }
 
     def get_rendered_content(self):
         """
