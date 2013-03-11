@@ -1,0 +1,66 @@
+[
+    {
+        "pk": 1,
+        "model": "flexible_content.baseitem",
+        "fields": {
+            "ordering": 1,
+            "content_area_id": 1,
+            "content_area_ct": [
+                "test_app",
+                "myarea"
+            ]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "flexible_content.baseitem",
+        "fields": {
+            "ordering": 2,
+            "content_area_id": 1,
+            "content_area_ct": [
+                "test_app",
+                "myarea"
+            ]
+        }
+    },
+    {
+        "pk": 1,
+        "model": "default_item_types.plaintext",
+        "fields": {
+            "text": "Hey, Luke! May the Force be with you. Your eyes can deceive you. Don't trust them. Red Five standing by.\r\n\r\nBut with the blast shield down, I can't even see! How am I supposed to fight? Remember, a Jedi can feel the Force flowing through him. Hokey religions and ancient weapons are no match for a good blaster at your side, kid. I'm trying not to, kid."
+        }
+    },
+    {
+        "pk": 2,
+        "model": "default_item_types.video",
+        "fields": {
+            "video_id": "59338758",
+            "service": "vimeo"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "test_app.myarea",
+        "fields": {
+            "title": "Example Area"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2013-03-20T14:22:13.574Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$lXYz7yV8ceox$WqOkxRQbycBsAeQESTY18AFiNRtxy37SkXZaL2kVN2Q=",
+            "email": "test@test.com",
+            "date_joined": "2013-03-20T14:21:22.487Z"
+        }
+    }
+]

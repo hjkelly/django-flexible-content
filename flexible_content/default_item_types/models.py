@@ -12,6 +12,7 @@ class PlainText(BaseItem):
         description = _("This text won't be interpreted, other than to add "
                         "paragraph/line breaks. In other words, you can't put "
                         "HTML here.")
+        name = "Plain Text"
         type_slug = 'plain-text'
 
     class Meta:

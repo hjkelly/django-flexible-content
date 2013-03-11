@@ -1,0 +1,59 @@
+{% extends "admin/change_form.html" %}
+{% load staticfiles %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{% static 'flexible-content/base.js' %}"></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'flexible-content/base.css' %}" />
+{% endblock %}
+
+{% block after_field_sets %}
+    <script type="text/javascript">
+        var fcFormTemplates = {
+            {% for t in fc_types %}
+                '{{ t.get_type_slug }}': '{{ t.get_form_template.as_content_item|escapejs }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+        // Output the placeholder, and just to be safe, escape any non-regex-
+        // safe characters.
+        var fcFormPrefixPlaceholder = '{{ fc_form_prefix_placeholder }}'
+            .replace(/(?=[\\^$*+?.()|{}[\]])/g, "\\");
+    </script>
+    <div class="module">
+        <h2>
+            Content Items (<span class="fc-item-counter">{{ fc_forms|length }}</span>)
+            <!-- CONTROL VARIABLES HERE -->
+            <input name="fc-prefixes" type="hidden"
+                   class="fc-prefixes"
+                   value="" />
+        </h2>
+        <div class="fc-items">
+            {% for form in fc_forms %}
+                {{ form.as_content_item }}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="module fc-add-item">
+        <h2>Add more content...</h2>
+        <p class="description">
+            What type of content do you need to add?
+        </p>
+        <ul class="fc-item-types">
+            {% for t in fc_types %}
+                <li>
+                    <a href="#" data-type-slug="{{ t.get_type_slug }}">
+                        {{ t.get_type_name }} &mdash;
+                        <span>{{ t.get_type_description }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+

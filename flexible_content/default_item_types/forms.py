@@ -3,12 +3,13 @@ from django.utils.translation import ugettext as _
 from django.utils import simplejson
 
 import requests
+from flexible_content.forms import BaseItemForm
 
 from .models import Video
 
 
-class VideoForm(forms.ModelForm):
-    class Meta:
+class VideoForm(BaseItemForm):
+    class Meta(BaseItemForm.Meta):
         model = Video
 
     def clean_video_id(self):
@@ -28,7 +29,7 @@ class VideoForm(forms.ModelForm):
             try:
                 json = simplejson.loads(data.text)
             # If not, mark this as a failure.
-            except simplejson.JSONDecodeError:
+            except ValueError:
                 failed = True
 
         # Validate using Vimeo's API:
@@ -38,7 +39,7 @@ class VideoForm(forms.ModelForm):
             try:
                 json = simplejson.loads(data.text)
             # If not, mark this as a failure.
-            except simplejson.JSONDecodeError:
+            except ValueError:
                 failed = True
             
         # Respond based on the outcome.

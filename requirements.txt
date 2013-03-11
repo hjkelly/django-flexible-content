@@ -1,4 +1,4 @@
-django-model-utils
 requests
+django-model-utils
 coverage
-django-coverage
+django-nose

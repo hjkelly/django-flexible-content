@@ -1,0 +1,42 @@
+<div class="fc-item" data-form-prefix="{{ form.prefix }}">
+    <div class="header prevent-scroll" draggable="false">
+        {% with form.get_header_fields as hfields %}
+            {# PRIMARY KEY (for existing items) #}
+            {% if form.instance and form.instance.pk %}
+                <input type="hidden" name="{{ form.prefix }}-pk"
+                    value="{{ form.instance.pk }}" />
+            {% endif %}
+            {# ORDERING #}
+            <input type="text" name="{{ form.prefix }}-ordering"
+                readonly="readonly" class="fc-ordering prevent-scroll"
+                value="" />
+            {# CONTENT TYPE #}
+            <h3 class="content-type prevent-scroll">
+                {{ form.instance.get_type_name }}
+                <input type="hidden" name="{{ form.prefix }}-ct"
+                    class="prevent-scroll"
+                    value="{{ form.instance.get_content_type.pk }}" />
+            </h3>
+            <menu>
+                <a href="#" class="fc-move-up">Move Up</a>
+                <a href="#" class="fc-move-down">Move Down</a>
+                {# DELETE #}
+                <a href="#" class="fc-delete">
+                    <span>Delete</span>
+                    <input type="hidden" name="{{ form.prefix }}-delete"
+                        value="0" />
+                </a>
+            </menu>
+        {% endwith %}
+    </div>
+    <div class="simple">
+        {% for field in form.get_unique_fields %}
+            <label class="clearfix">
+                {% if field.errors %}{{ field.errors }}{% endif %}
+                <h4>{{ field.label }}</h4>
+                <div class="field-wrapper">{{ field }}</div>
+            </label>
+        {% endfor %}
+    </div>
+</div>
+
