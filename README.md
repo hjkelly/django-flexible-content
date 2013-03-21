@@ -17,6 +17,7 @@ Why would I use it?
 -------------------
 
 Say you develop a site for someone who wants to put content on their own blog. Sure, you could give them a WYSIWYG editor and trust them to upload/drop in their own images. But what if that's not enough?
+
 1.  What if we want to enhance the styling on those images?
 2.  What if you want to add extra stuff like a `<fighead>` or `<figcaption>`? There's no way they can do that in a user-friendly way, anywhere they want.
 3.  What if you just want to ensure all images (or videos, or whatever) are shown consistently across the site?
