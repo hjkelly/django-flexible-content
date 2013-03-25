@@ -1,4 +1,5 @@
-requests
-django-model-utils
-coverage
+pylint
+pep8
 django-nose
+coverage
+

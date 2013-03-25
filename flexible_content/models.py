@@ -3,7 +3,7 @@ This file makes a way for random pieces of content to be assigned to any given
 model instance.
 
 For example, say you have a Page model that subclasses ContentArea. For a Page
-with id 1, you create the following BaseItems, where the numbering is 
+with id 1, you create the following BaseItems, where the numbering is
 indicative of order:
     1.  some text
     2.  an image with a heading and caption
@@ -33,10 +33,6 @@ from .utils import (get_app_settings,
                     get_model_from_string,
                     get_models_from_strings)
 
-
-###############################################################################
-# BaseItem
-###############################################################################
 
 class BaseItemManager(InheritanceManager):
     def get_for_area(self, area):
@@ -143,8 +139,8 @@ class BaseItem(models.Model):
 
     def get_form(self, *args, **kwargs):
         """
-        Generate a form of this typeFor a given model instance, generate the 
-        form. Optionally take the data and file arguments that standard forms 
+        Generate a form of this typeFor a given model instance, generate the
+        form. Optionally take the data and file arguments that standard forms
         take, and pass those along.
         """
 
@@ -192,10 +188,6 @@ class BaseItem(models.Model):
         return slug
 
 
-###############################################################################
-# ContentArea
-###############################################################################
-
 class ContentArea(models.Model):
     rendered_content = None
 
@@ -232,9 +224,6 @@ class ContentArea(models.Model):
             self.rendered_content = '\n\n'.join(rendered_items)
         return self.rendered_content
 
-###############################################################################
-# TemporaryArea
-###############################################################################
 
 class TemporaryArea(ContentArea):
     """
@@ -242,7 +231,7 @@ class TemporaryArea(ContentArea):
 
     This is necessary because we're overriding Django's views and it creates
     any messages and forms the redirect (or error response). We need to save
-    the items before that happens, so it doesn't do all that junk when our 
+    the items before that happens, so it doesn't do all that junk when our
     content items are about to screw things up and change the proper response.
     """
 

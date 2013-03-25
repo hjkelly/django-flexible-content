@@ -17,4 +17,3 @@ class MyItem(BaseItem):
 
     class Meta:
         verbose_name = _("My Item")
-

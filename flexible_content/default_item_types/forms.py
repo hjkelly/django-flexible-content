@@ -24,7 +24,9 @@ class VideoForm(BaseItemForm):
 
         # Validate using YouTube's API:
         if service == 'youtube':
-            data = requests.get('http://gdata.youtube.com/feeds/api/videos/{}?alt=json'.format(video_id))
+            url = ('http://gdata.youtube.com/feeds/api/videos/{}?alt=json'.
+                   format(video_id))
+            data = requests.get(url)
             # Ensure we can parse the JSON data.
             try:
                 json = simplejson.loads(data.text)
@@ -34,16 +36,17 @@ class VideoForm(BaseItemForm):
 
         # Validate using Vimeo's API:
         elif service == 'vimeo':
-            data = requests.get('http://vimeo.com/api/v2/video/{}.json'.format(video_id))
+            data = requests.get('http://vimeo.com/api/v2/video/{}.json'.
+                                format(video_id))
             # Ensure we can parse the JSON data.
             try:
                 json = simplejson.loads(data.text)
             # If not, mark this as a failure.
             except ValueError:
                 failed = True
-            
+
         # Respond based on the outcome.
-        if failed == True:
+        if failed:
             message = _("Couldn't validate video id using {} API. Please "
                         "verify it exists and check for "
                         "typos.".format(service))

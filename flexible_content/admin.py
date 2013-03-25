@@ -1,21 +1,21 @@
 """
 I am sorry for this file.
 
-You see, Django does have support for inlines. But not inlines of different 
+You see, Django does have support for inlines. But not inlines of different
 types. So these hacks take over the space between `fieldsets` and `inlines`
 and manage these content items on their own.
 
 The first time I wrote this, I replaced the add_view and change_view methods
-altogether. This is bad because it meant any changes to the stock Django 
+altogether. This is bad because it meant any changes to the stock Django
 methods don't propagate to the overridden methods.
 
 This version is a complete rewrite with the goal of using super() instead of
 nuking ModelAdmin's add_view and change_view. That means that all the value
 they add has to happen before and after the super() call. Consequently, parts
-of this are less than obvious, because it's not given a piece of data 
+of this are less than obvious, because it's not given a piece of data
 explicitly.
 
-Ideally, this would be redone in the future to be more elegant - perhaps 
+Ideally, this would be redone in the future to be more elegant - perhaps
 replacing the views altogether, or allowing front-end editing via an API.
 """
 
@@ -35,6 +35,8 @@ csrf_protect_m = method_decorator(csrf_protect)
 
 FORM_PREFIX_TEMPLATE = 'fc-item-{counter}'
 FORM_PREFIX_PLACEHOLDER = 'PLACEHOLDER'
+
+
 def get_form_prefix(counter=FORM_PREFIX_PLACEHOLDER):
     return FORM_PREFIX_TEMPLATE.format(counter=counter)
 
@@ -64,6 +66,7 @@ class ContentAreaAdminForm(forms.ModelForm):
             raise forms.ValidationError(message)
 
         return d
+
 
 class ContentAreaAdmin(admin.ModelAdmin):
     """
@@ -229,12 +232,12 @@ class ContentAreaAdmin(admin.ModelAdmin):
             raise Exception(message)
 
         return model_class
-        
+
     def fc_get_forms_from_POST(self, request):
         forms = []
 
         # What prefixes are there?
-        prefixes = [p for p in 
+        prefixes = [p for p in
                     request.POST.get('fc-prefixes', '').split(',') if p]
 
         # Loop through each submitted item and process its data.
@@ -294,7 +297,7 @@ class ContentAreaAdmin(admin.ModelAdmin):
         # If this is a GET on an existing area.
         elif obj:
             for i in obj.items:
-                prefix = get_form_prefix(len(forms)+1)
+                prefix = get_form_prefix(len(forms) + 1)
                 forms.append(i.get_form(prefix=prefix))
         # If this is a GET on an area's ADD page.
         else:
@@ -321,7 +324,7 @@ class ContentAreaAdmin(admin.ModelAdmin):
         If this is a new item and not a change, save the new obj somewhere we
         can find it!
 
-        This is necessary because we don't have a hook for this within 
+        This is necessary because we don't have a hook for this within
         add_view on either side of the super() call.
         """
 

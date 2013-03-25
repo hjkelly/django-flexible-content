@@ -60,6 +60,7 @@ def get_default_video_service():
     settings = get_app_settings()
     return settings.get('DEFAULT_VIDEO_SERVICE', '')
 
+
 class Video(BaseItem):
     SERVICE_CHOICES = (
         ('youtube', _('YouTube')),

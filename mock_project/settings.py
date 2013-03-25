@@ -1,8 +1,6 @@
 import os
 
-# Django settings for mock_project project.
-
-# Traverse up to the directory where manage.py 
+# Traverse up to the directory where manage.py
 SITE_ROOT = os.path.abspath(os.path.join(__file__, os.pardir))
 
 DEBUG = True
@@ -87,7 +85,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -97,7 +95,7 @@ SECRET_KEY = 'o-l3rru_!nqk39bj($a8*2ve7g#+k4kn2p#7&amp;gd-g2&amp;9&amp;icd9e'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -116,8 +114,6 @@ ROOT_URLCONF = 'mock_project.urls'
 WSGI_APPLICATION = 'mock_project.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 

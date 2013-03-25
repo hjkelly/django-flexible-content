@@ -3,6 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from django.utils.translation import ugettext as _
 
+
 def get_app_settings():
     """
     Load the settings and make sure it's not totally wrong.
@@ -12,7 +13,7 @@ def get_app_settings():
     if app_settings is None:
         app_settings = {}
 
-    # If the settings were defined as something other than None or a 
+    # If the settings were defined as something other than None or a
     # dictionary, raise a stink.
     if not isinstance(app_settings, dict):
         message = _("Setting FLEXIBLE_CONTENT should be a dictionary; "
@@ -21,15 +22,16 @@ def get_app_settings():
 
     return app_settings
 
+
 def get_model_from_string(model_string):
     """
     Take a list of 'app.ModelName' strings and return a list of model classes.
     """
 
-    # This Django function takes app names and model class names 
+    # This Django function takes app names and model class names
     # separated by a dot/period.
     model = get_model(*model_string.split('.'))
-    
+
     # If the model came back as None, it couldn't import it.
     if model is None:
         message = _("Model '{}' was defined in the settings for "
@@ -38,6 +40,7 @@ def get_model_from_string(model_string):
         raise ImportError(message)
 
     return model
+
 
 def get_models_from_strings(model_strings):
     """

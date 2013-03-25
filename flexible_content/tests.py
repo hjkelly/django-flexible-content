@@ -52,11 +52,11 @@ class TestDataMixin(object):
         'title': "Our original area, but updated",
         'fc-prefixes': 'fc-item-1,fc-item-2,fc-item-3,fc-item-4',
 
-        # ITEM 1: Update the text and swap its place with item 2. Leave the 
+        # ITEM 1: Update the text and swap its place with item 2. Leave the
         # content area and stuff blank, to make sure it overwrites them.
         'fc-item-1-content_area_ct': '',
         'fc-item-1-content_area_id': '',
-        'fc-item-1-pk': 1, # Must stay consistent with our JSON fixture
+        'fc-item-1-pk': 1,  # Must stay consistent with our JSON fixture
         'fc-item-1-ct': ContentType.objects.get_for_model(PlainText).pk,
         'fc-item-1-ordering': 2,
         'fc-item-1-delete': 0,
@@ -67,7 +67,7 @@ class TestDataMixin(object):
         'fc-item-2-ordering': 1,
         'fc-item-2-delete': 1,
         'fc-item-2-ct': ContentType.objects.get_for_model(Video).pk,
-        'fc-item-2-pk': 2, # Must stay consistent with our JSON fixture
+        'fc-item-2-pk': 2,  # Must stay consistent with our JSON fixture
         'fc-item-2-service': "vimeo",
         'fc-item-2-video_id': "59338758",
 
@@ -125,7 +125,7 @@ class ConfiguredTypesTest(SimpleTestCase):
                       "instead of a dict).")
 
     # Give it a nonexistent app and model to make sure it complains.
-    @override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': ('fake_app.ThisDoesNotExist',)})
+    @override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': ('fake.DoesNotExist',)})
     def test_with_nonexistent_type(self):
         try:
             types = BaseItem.get_configured_types()
@@ -146,9 +146,9 @@ class ConfiguredTypesTest(SimpleTestCase):
 @override_settings(FLEXIBLE_CONTENT={'ITEM_TYPES': CUSTOM_TYPES_STRING})
 class AreaTest(TestCase):
     """
-    Ensure that all of the basic functions we need can be 
+    Ensure that all of the basic functions work, at least somewhat.
     """
-    
+
     def setUp(self):
         # Create an area with regular ordering (first item first).
         self.area_a = MyArea.objects.create(title="Blah")
@@ -298,7 +298,7 @@ class ItemTest(TestDataMixin, TestCase):
         form_with_data = new_item.get_form(data=fake_POST)
         # Save it!
         form_with_data.save()
-        
+
         # See if the form has an instance with valid primary key.
         if not getattr(form_with_data.instance, 'pk'):
             self.fail("Couldn't create a video by saving faked data through "
@@ -522,14 +522,14 @@ class AdminIntegrationTest(TestDataMixin, TestCase):
             'title': "Test Page - no items",
             'fc-prefixes': '',
         }
-        
+
         # Get the areas that already exist.
         existing_area_pks = tuple(MyArea.objects.values_list('pk', flat=True))
 
         # Hit the admin with our 'create new area' request.
         response = self.client.post(url, data)
 
-        # Get newly-created areas. There should only be one, and it should 
+        # Get newly-created areas. There should only be one, and it should
         # have the title we're looking for.
         new_areas = tuple(MyArea.objects.exclude(pk__in=existing_area_pks))
 
@@ -543,7 +543,7 @@ class AdminIntegrationTest(TestDataMixin, TestCase):
         # What page will we hit?
         url = '/admin/test_app/myarea/add/'
         data = self.data_for_another_area
-        
+
         # Get the areas that already exist.
         existing_area_pks = tuple(MyArea.objects.values_list('pk', flat=True))
         existing_item_pks = tuple(BaseItem.objects.
@@ -572,7 +572,7 @@ class AdminIntegrationTest(TestDataMixin, TestCase):
         this_area_pk = self.area.pk
         url = '/admin/test_app/myarea/{}/'.format(this_area_pk)
         data = self.data_for_updating_first_area
-        
+
         # Get the areas that already exist.
         self.assertEqual(len(self.area.items), 2)
 
@@ -587,7 +587,7 @@ class AdminIntegrationTest(TestDataMixin, TestCase):
                       "delete one of its items.")
         self.assertEqual(area.title, data['title'])
 
-        # Make sure we still have two items. The second should have been 
+        # Make sure we still have two items. The second should have been
         # deleted, another one never completed (marked as deleted before saved)
         # and another that was genuinely added. So combined with the one that
         # was merely updated, that makes two.
@@ -599,7 +599,7 @@ class AdminIntegrationTest(TestDataMixin, TestCase):
         self.assertEqual(first_item.text, data['fc-item-1-text'])
         self.assertEqual(first_item.pk, data['fc-item-1-pk'])
 
-        # Make sure the new item (with ordering four; the second remaining) 
+        # Make sure the new item (with ordering four; the second remaining)
         # was saved and has the right ContentType and everything.
         second_item = area.items[1]
         self.assertEqual(second_item.text, data['fc-item-4-text'])
