@@ -138,11 +138,6 @@ class ContentAreaAdmin(admin.ModelAdmin):
         """
         all_items_validated = True
 
-        # Ensure we don't accidentally do this on a GET request.
-        if request.method != 'POST':
-            raise Exception("You shouldn't ever call save_items with a GET "
-                            "request!")
-
         # If the current area doesn't exist yet, create a temporary one to save
         # the items to.
         if area is None:
