@@ -36,43 +36,40 @@ That said, let's get started:
 
     ```python
     INSTALLED_APPS = (
-        # ...
         'flexible_content',
         'flexible_content.default_item_types',  # Optional: Five basic types of content item.
+        # other apps here
     )
     ```
-
-    Also, the thinote that the app_directories template loaders must be enabled[TEMPLATE_LOADERS] should be enabled, but this is Django's default behavior.
 3.  Sync your database: `python manage.py syncdb`
-4.  For each model you want to add content items to, subclass ContentArea.
+4.  For each model you want to add content items to, subclass ContentArea. For example, my_project/my_app/models.py:
 
     ```python
-    # my_project/my_app/models.py:
     from django.db import models
     from flexible_content.models import ContentArea
-
+    
     class BlogPost(ContentArea):
         title = models.CharField(max_length=50)
         slug = models.CharField(max_length=50)
-
+        
         class Meta:
             verbose_name = "blog post"
     ```
-
     Note that this won't change your database schema at all: ContentArea is an abstract class that just adds helper functionality.
-5.  For each model that subclasses ContentArea, define a custom ModelAdmin that subclasses ContentAreaAdmin.
+5.  For each model that subclasses ContentArea, define a custom ModelAdmin that subclasses ContentAreaAdmin. For example, my_project/my_app/admin.py:
 
     ```python
-    # my_project/my_app/admin.py:
     from django.contrib import admin
     from flexible_content.admin import ContentAreaAdmin
     from .models import BlogPost
-
+    
     class BlogPostAdmin(ContentAreaAdmin):
         pass
-
+    
     admin.sites.register(BlogPost, BlogPostAdmin)
     ```
+6.  Run `python manage.py collectstatic` to collect all static files.
+7.  Start your web server and go to the admin for the BlogPost model (or whichever one you added it to). Observe, flexible content controls!
 
 Custom Templates
 ----------------
@@ -81,6 +78,7 @@ You can define your own templates that replace the ones included with the `defau
 
 1.  In one of your own app's `templates` directory (or in a folder specified by the `TEMPLATE_DIRS` setting), create a folder called `flexible-content`.
 2.  Inside of that directory, create an HTML file based on the type's slug:
+
     ```
     flexible-content/download.html
     flexible-content/image.html
@@ -98,7 +96,8 @@ Custom Item Types
 -----------------
 
 I'll write this documentation soon, I promise! Until then, see `flexible_content_types.default_item_types.models` for examples. Once you've created those models that subclass BaseItem, you also need to specify that model in your settings:
-```
+
+```python
 FLEXIBLE_CONTENT = {
     'ITEM_TYPES': (
         'my_app.RichText',
