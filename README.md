@@ -32,8 +32,11 @@ Requirements:
 That said, let's get started:
 
 1.  Install the package.
-    `pip install django-flexible-content`
+    ```
+    pip install django-flexible-content
+    ```
 2.  Add it to your settings file.
+
     ```python
     INSTALLED_APPS = (
         # ...
@@ -41,10 +44,13 @@ That said, let's get started:
         'flexible_content.default_item_types',  # Optional: Five basic types of content item.
     )
     ```
+
     Also, the thinote that the app_directories template loaders must be enabled[TEMPLATE_LOADERS] should be enabled, but this is Django's default behavior.
 3.  Sync your database.
+
     `python manage.py syncdb`
 4.  For each model you want to add content items to, subclass ContentArea.
+
     ```python
     # my_project/my_app/models.py:
     from django.db import models
@@ -57,8 +63,10 @@ That said, let's get started:
         class Meta:
             verbose_name = "blog post"
     ```
+
     Note that this won't change your database schema at all: ContentArea is an abstract class that just adds helper functionality.
 5.  For each model that subclasses ContentArea, define a custom ModelAdmin that subclasses ContentAreaAdmin.
+
     ```python
     # my_project/my_app/admin.py:
     from django.contrib import admin
