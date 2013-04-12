@@ -30,6 +30,7 @@ Requirements:
 -   Your project uses the staticfiles app. It must also be configured to find staticfiles in app directories ([it is by default](https://docs.djangoproject.com/en/1.5/ref/contrib/staticfiles/#staticfiles-finders)).
 
 That said, let's get started:
+
 1.  Install the package.
     `pip install django-flexible-content`
 2.  Add it to your settings file.
@@ -74,7 +75,8 @@ Custom Templates
 ----------------
 
 You can define your own templates that replace the ones included with the `default_item_types` app.
-1.  In one of your own app's `templates` directory (or in a folder specified by the TEMPLATE_DIRS setting), create a folder called `flexible-content`.
+
+1.  In one of your own app's `templates` directory (or in a folder specified by the `TEMPLATE_DIRS` setting), create a folder called `flexible-content`.
 2.  Inside of that directory, create an HTML file based on the type's slug:
     ```
     flexible-content/download.html
