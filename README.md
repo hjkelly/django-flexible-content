@@ -31,10 +31,7 @@ Requirements:
 
 That said, let's get started:
 
-1.  Install the package.
-    ```
-    pip install django-flexible-content
-    ```
+1.  Install the package: `pip install django-flexible-content`
 2.  Add it to your settings file.
 
     ```python
@@ -46,9 +43,7 @@ That said, let's get started:
     ```
 
     Also, the thinote that the app_directories template loaders must be enabled[TEMPLATE_LOADERS] should be enabled, but this is Django's default behavior.
-3.  Sync your database.
-
-    `python manage.py syncdb`
+3.  Sync your database: `python manage.py syncdb`
 4.  For each model you want to add content items to, subclass ContentArea.
 
     ```python
