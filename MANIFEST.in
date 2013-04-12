@@ -3,6 +3,7 @@ recursive-include flexible_content/static *
 recursive-include flexible_content/templates *
 recursive-include flexible_content/default_item_types/templates *
 recursive-exclude * .DS_Store
-recursive-exclude * *.py[co]
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
 recursive-exclude * *.sqlite
 recursive-exclude * *.swp

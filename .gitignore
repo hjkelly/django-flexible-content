@@ -1,3 +1,5 @@
 .*
 *.pyc
+*.egg-info
 mock_project/*.sqlite3
+mock_project/media

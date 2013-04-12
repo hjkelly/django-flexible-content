@@ -6,7 +6,7 @@ from setuptools import find_packages
 packages = find_packages()
 
 setup(name='django-flexible-content',
-      version='0.1.0',
+      version='0.9.0',
       packages=packages,
       include_package_data=True,
       install_requires=['Django >= 1.4',
