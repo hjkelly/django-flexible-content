@@ -6,6 +6,7 @@ from setuptools import find_packages
 packages = find_packages()
 
 setup(name='django-flexible-content',
+      description="Allows granular, typed, extensible control over a page's content.",
       url='https://github.com/hjkelly/django-flexible-content',
       maintainer='Harrison Kelly',
       maintainer_email='hjkelly@gmail.com',
