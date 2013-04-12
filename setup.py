@@ -6,6 +6,9 @@ from setuptools import find_packages
 packages = find_packages()
 
 setup(name='django-flexible-content',
+      url='https://github.com/hjkelly/django-flexible-content',
+      maintainer='Harrison Kelly',
+      maintainer_email='hjkelly@gmail.com',
       version='0.9.0',
       packages=packages,
       include_package_data=True,
