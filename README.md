@@ -71,6 +71,16 @@ That said, let's get started:
 6.  Run `python manage.py collectstatic` to collect all static files.
 7.  Start your web server and go to the admin for the BlogPost model (or whichever one you added it to). Observe, flexible content controls!
 
+Rendering Content Items
+-----
+
+Once your admin is set up, using flexible content in your templates is simple: the `get_rendered_content` method on your model (the one that subclasses `ContentArea`) will return all of its items as HTML. For our blog example above, you might edit `my_project/templates/my_app/blog-detail.html` as follows:
+
+```html
+<h1>{{ object.title }}</h1>
+{{ object.get_rendered_content|safe }}
+```
+
 Custom Templates
 ----------------
 
